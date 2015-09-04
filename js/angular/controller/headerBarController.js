@@ -27,6 +27,7 @@ function($scope, $element, $attrs, $q, $ionicConfig, $ionicHistory) {
   var isBackElementShown = false;
   var titleTextWidth = 0;
 
+  self.forceReset = false;
 
   self.beforeEnter = function(viewData) {
     $scope.$broadcast('$ionicView.beforeEnter', viewData);
@@ -104,11 +105,8 @@ function($scope, $element, $attrs, $q, $ionicConfig, $ionicHistory) {
 
 
   self.titleTextWidth = function() {
-    if (!titleTextWidth) {
-      var bounds = ionic.DomUtil.getTextBounds(getEle(TITLE));
-      titleTextWidth = Math.min(bounds && bounds.width || 30);
-    }
-    return titleTextWidth;
+    var bounds = ionic.DomUtil.getTextBounds(getEle(TITLE));
+    return Math.min(bounds && bounds.width || 30);
   };
 
 
@@ -311,14 +309,16 @@ function($scope, $element, $attrs, $q, $ionicConfig, $ionicHistory) {
 
     // only make DOM updates when there are actual changes
     if (titleEle) {
-      if (updateTitleLeft !== titleLeft) {
+      if (updateTitleLeft !== titleLeft || self.forceReset) {
         titleEle.style.left = updateTitleLeft ? updateTitleLeft + 'px' : '';
         titleLeft = updateTitleLeft;
       }
-      if (updateTitleRight !== titleRight) {
+      if (updateTitleRight !== titleRight || self.forceReset) {
         titleEle.style.right = updateTitleRight ? updateTitleRight + 'px' : '';
         titleRight = updateTitleRight;
       }
+
+      if (self.forceReset) self.forceReset = false;
 
       if (updateCss !== titleCss) {
         updateCss && titleEle.classList.add(updateCss);
